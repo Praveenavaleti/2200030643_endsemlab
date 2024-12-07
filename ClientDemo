@@ -1,0 +1,45 @@
+package jfsd.exam;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.cfg.Configuration;
+
+public class ClientDemo {
+
+	public static void main(String[] args) {
+		Configuration cfg = new Configuration();
+        cfg.configure("hibernate.cfg.xml");
+        SessionFactory sessionFactory = cfg.buildSessionFactory();
+
+        // Start session
+        Session session = sessionFactory.openSession();
+        Transaction transaction = session.beginTransaction();
+
+        try {
+            // HQL Update Operation
+            int departmentIdToUpdate = 1; // Example ID
+            String newName = "Computer Science";
+            String newLocation = "Building B";
+
+            String hql = "UPDATE Department SET name = ?1, location = ?2 WHERE departmentId = ?3";
+            int updatedRows = session.createQuery(hql)
+                                     .setParameter(1, newName)
+                                     .setParameter(2, newLocation)
+                                     .setParameter(3, departmentIdToUpdate)
+                                     .executeUpdate();
+
+            transaction.commit();
+            System.out.println("Rows updated: " + updatedRows);
+        } catch (Exception e) {
+            transaction.rollback();
+            e.printStackTrace();
+        } finally {
+            session.close();
+            sessionFactory.close();
+        }
+    }
+		
+
+	}
+
+
